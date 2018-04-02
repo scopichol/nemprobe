@@ -1,0 +1,23 @@
+https://rb2nem.github.io/nem-dev-guide/
+https://nemproject.github.io/#requesting-the-account-status
+https://github.com/QuantumMechanics/NEM-sdk
+http://bob.nem.ninja:8765/#/search/TBTPDJDR3ZMHMMIKUXPXJTQICBX3IFRRSV6PVFBE
+https://tomotomo9696.xyz/nem/faucet/
+
+Задать системные переменные windows
+bash ndev.sh
+tail /var/log/nis-stderr.log  -f
+
+npm install nem-sdk
+
+http :7890/chain/height
+http :7890/block/at/public height:=1382410
+http :7890/transaction/get?hash=d568088cd62d45afe9bdfbd45cd9e375a3a38410a8a385d5d2aaacdec109580c
+http :7890/account/get?address=TBTPDJDR3ZMHMMIKUXPXJTQICBX3IFRRSV6PVFBE
+http :7890/account/get/from-public-key?publicKey=5ef802db3b06fab115b55e55edc3a6322d37173da55b7ef7024c37ac5f4a1a38
+http :7890/transaction/annonce
+http://bigalice2.nem.ninja:7890
+
+tmp
+https://github.com/google/martian/issues/31
+https://github.com/mitmproxy/mitmproxy/issues/2284
