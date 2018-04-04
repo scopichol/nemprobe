@@ -8,26 +8,31 @@ var nisURL = "http://localhost";
 var nisPort = "7890";
 var actual_sender={publicKey: "8fd75ca94dd7e4916b13c8349e345ba90c2b9de85323edb0998aac94d89b971a"}
 
-var endpoint = nem.model.objects.create("endpoint")(nisURL, nisPort);
+//~ var endpoint = nem.model.objects.create("endpoint")(nisURL, nisPort);
+var endpoint = nem.model.objects.create("endpoint")(nem.model.nodes.defaultTestnet, nem.model.nodes.defaultPort);
 var common = nem.model.objects.get("common");
 common.privateKey = privateKey;
 var transferTransaction = nem.model.objects.create("transferTransaction")(recipient, amount, message);
 transferTransaction.isMultisig= true;
 transferTransaction.multisigAccount=actual_sender
 
-console.log(transferTransaction);
-
 var transactionEntity = nem.model.transactions.prepare("transferTransaction")(common, transferTransaction, nem.model.network.data.testnet.id)
-console.log("--------------------------------");
-console.log(transactionEntity);
-console.log("--------------------------------");
 //~ nem.model.transactions.send(common, transactionEntity, endpoint).then(function(res) {console.log("done");console.log(res);});
 nem.com.requests.account.transactions.unconfirmed(endpoint, "TBTPDJDR3ZMHMMIKUXPXJTQICBX3IFRRSV6PVFBE").then(function(res) {
-    console.log("done");
     common.privateKey = "a1b4334d2bf1afa82cfd80e8dea7fab3450adb972598796b65d05d617158ad7f";
-    var confirmTransaction = res.data[0].transaction;
-    var transactionEntity = nem.model.transactions.prepare("signatureTransaction")(common, confirmTransaction, nem.model.network.data.testnet.id)
-    console.log(transactionEntity);
-    nem.model.transactions.send(common, confirmTransaction, endpoint).then(function(res) {console.log("done");console.log(res);});
+    var transactionMetaDataPair = res.data[0];
+    var signTx = nem.model.objects.create("signatureTransaction")("TA7U5VQWBU42QYZ3L4ZDXXS6UGJ32KQ57LL4RNIX", transactionMetaDataPair.meta.data);
+    var transactionEntity = nem.model.transactions.prepare("signatureTransaction")(common, signTx, nem.model.network.data.testnet.id);
+    var secretPair = nem.crypto.keyPair.create(common.privateKey);
+    var serialized = nem.utils.serialization.serializeTransaction(transactionEntity);
+    var signature = secretPair.sign(serialized);
+    var broadcastable = JSON.stringify({
+                "data": nem.utils.convert.ua2hex(serialized),
+                "signature": signature.toString()
+            });
+    nem.com.requests.transaction.announce(endpoint, broadcastable).then(function(res) {
+        console.log("done");
+        console.log(res);        
+    });
 });
 //~ console.log(nem);
