@@ -41,15 +41,15 @@ nem.com.requests.account.data(endpoint, "TAYYI46DZRS3N35TYMBP5WN7SQ2F7TE3XR6HRQJ
 
 var bip39 = require('bip39');
 
-var rBytes = nem.crypto.nacl.randomBytes(32);
-var rHex = nem.utils.convert.ua2hex(rBytes);
-var keyPair = nem.crypto.keyPair.create(rHex);
-
-var mnemonic = bip39.entropyToMnemonic(rHex)
+//~ var rBytes = nem.crypto.nacl.randomBytes(32);
+//~ var rHex = nem.utils.convert.ua2hex(rBytes);
+var mnemonic = bip39.generateMnemonic(256)
+//~ var mnemonic = bip39.entropyToMnemonic(rHex)
 var pk = bip39.mnemonicToEntropy(mnemonic);
-console.log(pk);
+var keyPair = nem.crypto.keyPair.create(pk);
 
-console.log('secret',rHex)
+
+console.log('secret',pk)
 console.log('mnemonic', mnemonic);
 console.log('public',keyPair.publicKey.toString());
 console.log('testnet',nem.model.address.toAddress(keyPair.publicKey.toString(),  nem.model.network.data.testnet.id));
