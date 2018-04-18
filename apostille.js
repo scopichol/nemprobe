@@ -6,33 +6,31 @@ var address1 = "TC6SDTFIDJMHR7YHGNJS4ZKA5Y2A36WQDSMDCDVJ";
 var privateKey2 = "a1b4334d2bf1afa82cfd80e8dea7fab3450adb972598796b65d05d617158ad7f";
 var pubKey2 = "5ef802db3b06fab115b55e55edc3a6322d37173da55b7ef7024c37ac5f4a1a38";
 var address2 = "TBTPDJDR3ZMHMMIKUXPXJTQICBX3IFRRSV6PVFBE";
-var privateKey3 = "bcd7e6d3f7aff6a9b867035de8b2d2eb5cc4a7454c6a9a0090fca74558290dc6";
-
 var endpoint = nem.model.objects.create("endpoint")(nem.model.nodes.defaultTestnet, nem.model.nodes.defaultPort);
-//~ console.log(nem.crypto.js);
+
 var common = nem.model.objects.create("common")("", privateKey1);
-//~ var common = nem.model.objects.get("common");
-//~ common.privateKey = privateKey;
-//~ // Simulate the file content
-var fileContent = nem.crypto.js.enc.Utf8.parse('Apostille is awesome !');
+//~ console.log(nem);
+var fileContent = nem.crypto.js.enc.Utf8.parse("Apostille is awesome !!");
+//~ console.log(endpoint);
 
-// Create the Apostille
-var apostille = nem.model.apostille.create(common, "testDoc.txt", fileContent, "Tag3", nem.model.apostille.hashing["SHA256"], false, null,true, nem.model.network.data.testnet.id);
-console.log("APOSTILLE",apostille);
-// Serialize transfer transaction and announce
-//~ nem.model.transactions.send(common, apostille.transaction, endpoint).then(res => console.log("TX SUCCESS",res));
+var apostille = nem.model.apostille.create(common, "Test.txt", fileContent, "Test Apostille", nem.model.apostille.hashing["SHA256"], false, "", true, nem.model.network.data.testnet.id);
+console.log(apostille);
+//~ console.log('FILECONTENT', fileContent);
+//~ nem.model.transactions.send(common, apostille.transaction, endpoint).then(function (res) {console.log('CREATE',res);});
 
-//~ var txHash = "c8f517a9d1b8f47b129f0cae80edfe3cbb40864ca608db9dcdce144678f404cc";
-//~ // Get the Apostille transaction from the chain
-//~ nem.com.requests.transaction.byHash(endpoint, txHash).then(function(res) {
-  //~ // Verify
-    //~ console.log('RES', res);
-  //~ if (nem.model.apostille.verify(fileContent, res.transaction)) {
-    //~ console.log("Apostille is valid");
-  //~ } else {
-    //~ console.log("Apostille is invalid");
-  //~ }
-//~ }, function(err) {
-  //~ console.log("Apostille is invalid");
-  //~ console.log(err);
-//~ });
+var txHash = "b488c7874de5319dd1ccddcc7db954c81990171815e3e7bb8e54785c31a34e4b";
+
+// Get the Apostille transaction from the chain
+nem.com.requests.transaction.byHash(endpoint, txHash).then(function(res) {
+	console.log('TX',res);
+	console.log(nem.utils.format.hexToUtf8(res.transaction.message.payload));
+	// Verify
+  		if (nem.model.apostille.verify(fileContent, res.transaction)) {
+    		console.log("Apostille is valid");
+  		} else {
+    		console.log("Apostille is invalid");
+  		}
+	}, function(err) {
+  		console.log("Apostille is invalid");
+  		console.log(err);
+});
